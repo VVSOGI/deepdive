@@ -50,7 +50,7 @@ function init() {
         })
         .parse(process.argv)
 
-    if (program.info) {
+    if (program.opts().info) {
         console.log(chalk.bold('\nEnvironment Info:'))
         console.log(`\n  current version of ${packageJson.name}: ${packageJson.version}`)
         console.log(`  running from ${__dirname}`)
@@ -106,8 +106,8 @@ function init() {
                 )
             } else {
                 const useYarn = isUsingYarn()
-                console.log(projectName, program.verbose, program.scriptsVersion, program.template, useYarn, program.usePnp)
-                createApp(projectName, program.verbose, program.scriptsVersion, program.template, useYarn, program.usePnp)
+                const { verbose, template, scriptsVersion, usePnp } = program.opts()
+                createApp(projectName, verbose, scriptsVersion, template, useYarn, usePnp)
             }
         })
 }

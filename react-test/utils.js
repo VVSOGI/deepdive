@@ -308,34 +308,31 @@ function run(root, appName, version, verbose, originalDirectory, template, useYa
                     }))
                 })
                 .then(async ({ packageInfo, supportsTemplates, templateInfo }) => {
-                    console.log(packageInfo, supportsTemplates, templateInfo)
-                    // fs.unlinkSync(path.join(root, 'package.json'))
-
-                    //             const packageName = packageInfo.name
-                    //             const templateName = supportsTemplates ? templateInfo.name : undefined
-                    //             checkNodeVersion(packageName)
-                    //             setCaretRangeForRuntimeDeps(packageName)
-                    //             const pnpPath = path.resolve(process.cwd(), '.pnp.js')
-                    //             const nodeArgs = fs.existsSync(pnpPath) ? ['--require', pnpPath] : []
-                    //             await executeNodeScript(
-                    //                 {
-                    //                     cwd: process.cwd(),
-                    //                     args: nodeArgs
-                    //                 },
-                    //                 [root, appName, verbose, originalDirectory, templateName],
-                    //                 `
-                    //   const init = require('${packageName}/scripts/init.js');
-                    //   init.apply(null, JSON.parse(process.argv[1]));
-                    // `
-                    //             )
-                    //             if (version === 'react-scripts@0.9.x') {
-                    //                 console.log(
-                    //                     chalk.yellow(
-                    //                         `\nNote: the project was bootstrapped with an old unsupported version of tools.\n` +
-                    //                             `Please update to Node >=14 and npm >=6 to get supported tools in new projects.\n`
-                    //                     )
-                    //                 )
-                    //             }
+                    const packageName = packageInfo.name
+                    const templateName = supportsTemplates ? templateInfo.name : undefined
+                    checkNodeVersion(packageName)
+                    setCaretRangeForRuntimeDeps(packageName)
+                    const pnpPath = path.resolve(process.cwd(), '.pnp.js')
+                    const nodeArgs = fs.existsSync(pnpPath) ? ['--require', pnpPath] : []
+                    await executeNodeScript(
+                        {
+                            cwd: process.cwd(),
+                            args: nodeArgs
+                        },
+                        [root, appName, verbose, originalDirectory, templateName],
+                        `
+                      const init = require('${packageName}/scripts/init.js');
+                      init.apply(null, JSON.parse(process.argv[1]));
+                    `
+                    )
+                    if (version === 'react-scripts@0.9.x') {
+                        console.log(
+                            chalk.yellow(
+                                `\nNote: the project was bootstrapped with an old unsupported version of tools.\n` +
+                                    `Please update to Node >=14 and npm >=6 to get supported tools in new projects.\n`
+                            )
+                        )
+                    }
                 })
                 .catch((reason) => {
                     console.log()
@@ -348,7 +345,7 @@ function run(root, appName, version, verbose, originalDirectory, template, useYa
                     }
                     console.log()
                     // On 'exit' we will delete these files from target directory.
-                    const knownGeneratedFiles = ['package.json', 'node_modules']
+                    const knownGeneratedFiles = ['package.json', 'package-lock.json', 'node_modules']
                     const currentFiles = fs.readdirSync(path.join(root))
                     currentFiles.forEach((file) => {
                         knownGeneratedFiles.forEach((fileToMatch) => {
@@ -635,6 +632,89 @@ function getPackageInfo(installPackage) {
         return Promise.resolve({ name, version })
     }
     return Promise.resolve({ name: installPackage })
+}
+
+function checkNodeVersion(packageName) {
+    const packageJsonPath = path.resolve(process.cwd(), 'node_modules', packageName, 'package.json')
+
+    if (!fs.existsSync(packageJsonPath)) {
+        return
+    }
+
+    const packageJson = require(packageJsonPath)
+    if (!packageJson.engines || !packageJson.engines.node) {
+        return
+    }
+
+    if (!semver.satisfies(process.version, packageJson.engines.node)) {
+        console.error(
+            chalk.red(
+                'You are running Node %s.\n' + 'Create React App requires Node %s or higher. \n' + 'Please update your version of Node.'
+            ),
+            process.version,
+            packageJson.engines.node
+        )
+        process.exit(1)
+    }
+}
+
+function setCaretRangeForRuntimeDeps(packageName) {
+    const packagePath = path.join(process.cwd(), 'package.json')
+    const packageJson = require(packagePath)
+
+    if (typeof packageJson.dependencies === 'undefined') {
+        console.error(chalk.red('Missing dependencies in package.json'))
+        process.exit(1)
+    }
+
+    const packageVersion = packageJson.dependencies[packageName]
+    if (typeof packageVersion === 'undefined') {
+        console.error(chalk.red(`Unable to find ${packageName} in package.json`))
+        process.exit(1)
+    }
+
+    makeCaretRange(packageJson.dependencies, 'react')
+    makeCaretRange(packageJson.dependencies, 'react-dom')
+
+    fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + os.EOL)
+}
+
+function executeNodeScript({ cwd, args }, data, source) {
+    return new Promise((resolve, reject) => {
+        const child = spawn(process.execPath, [...args, '-e', source, '--', JSON.stringify(data)], { cwd, stdio: 'inherit' })
+
+        child.on('close', (code) => {
+            if (code !== 0) {
+                reject({
+                    command: `node ${args.join(' ')}`
+                })
+                return
+            }
+            resolve()
+        })
+    })
+}
+
+function makeCaretRange(dependencies, name) {
+    const version = dependencies[name]
+
+    if (typeof version === 'undefined') {
+        console.error(chalk.red(`Missing ${name} dependency in package.json`))
+        process.exit(1)
+    }
+
+    let patchedVersion = `^${version}`
+
+    if (!semver.validRange(patchedVersion)) {
+        console.error(
+            `Unable to patch ${name} dependency version because version ${chalk.red(version)} will become invalid ${chalk.red(
+                patchedVersion
+            )}`
+        )
+        patchedVersion = version
+    }
+
+    dependencies[name] = patchedVersion
 }
 
 module.exports = {

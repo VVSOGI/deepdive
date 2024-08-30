@@ -6,6 +6,7 @@ const chalk = require('chalk')
 const os = require('os')
 const spawn = require('cross-spawn')
 const execSync = require('child_process').execSync
+const prompts = require('prompts')
 const validateProjectName = require('validate-npm-package-name')
 
 function checkForLatestVersion() {

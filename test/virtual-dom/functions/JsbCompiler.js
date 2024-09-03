@@ -1,57 +1,60 @@
 const fs = require("fs");
 const path = require("path");
 
-fs.readFile(path.resolve(__dirname, `./test.jsb`), "utf8", (err, data) => {
-  if (err) {
-    console.error(err);
-  }
+fs.readFile(
+  path.resolve(__dirname, `../examples/test.jsb`),
+  "utf8",
+  (err, data) => {
+    if (err) {
+      console.error(err);
+    }
 
-  const replace = data.replace(/\s/g, "");
-  const tree = tokenizeJSXtoTree(replace);
-  const isExistFolder = fs.existsSync(path.resolve(__dirname, `../build`));
+    const replace = data.replace(/\s/g, "");
+    const tree = tokenizeJSXtoTree(replace);
+    const isExistFolder = fs.existsSync(path.resolve(__dirname, `../build`));
 
-  if (isExistFolder) {
-    fs.rmSync(
-      path.resolve(__dirname, `./build`),
-      { recursive: true, force: true },
+    if (isExistFolder) {
+      fs.rmSync(
+        path.resolve(__dirname, `./build`),
+        { recursive: true, force: true },
+        (err) => {
+          if (err) {
+            console.error(err);
+          }
+        }
+      );
+    }
+
+    fs.mkdirSync(path.resolve(__dirname, `../build`), { recursive: true });
+
+    const simpleReact = fs.readFileSync(
+      path.resolve(__dirname, `./simple-react.js`),
+      "utf8"
+    );
+
+    fs.writeFile(
+      path.resolve(__dirname, `../build/simple-react.js`),
+      simpleReact,
       (err) => {
         if (err) {
           console.error(err);
         }
       }
     );
-  }
 
-  fs.mkdirSync(path.resolve(__dirname, `../build`), { recursive: true });
-
-  const simpleReact = fs.readFileSync(
-    path.resolve(__dirname, `../packages/simple-react.js`),
-    "utf8"
-  );
-
-  fs.writeFile(
-    path.resolve(__dirname, `../build/simple-react.js`),
-    simpleReact,
-    (err) => {
-      if (err) {
-        console.error(err);
+    fs.writeFile(
+      path.resolve(__dirname, `../build/output.js`),
+      generateAppFunction(tree),
+      (err) => {
+        if (err) {
+          console.error(err);
+        }
       }
-    }
-  );
+    );
 
-  fs.writeFile(
-    path.resolve(__dirname, `../build/output.js`),
-    generateAppFunction(tree),
-    (err) => {
-      if (err) {
-        console.error(err);
-      }
-    }
-  );
-
-  fs.writeFile(
-    path.resolve(__dirname, `../build/output.html`),
-    `<!DOCTYPE html>
+    fs.writeFile(
+      path.resolve(__dirname, `../build/output.html`),
+      `<!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -61,17 +64,17 @@ fs.readFile(path.resolve(__dirname, `./test.jsb`), "utf8", (err, data) => {
       <body>
         <div id="root"></div>
       </body>
-      <script src="./simple-react.js"></script>
-      <script src="./output.js"></script>
+      <script src="./app.bundle.js"></script>
     </html>    
   `,
-    (err) => {
-      if (err) {
-        console.error(err);
+      (err) => {
+        if (err) {
+          console.error(err);
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 function convertToCreateElement(node) {
   if (node.type === "text") {
@@ -90,7 +93,10 @@ function convertToCreateElement(node) {
 
 function generateAppFunction(tree) {
   const elementString = convertToCreateElement(tree);
-  return `function App() {
+  return `
+  const { SimpleReact } = require("./simple-react");
+
+  function App() {
     return ${elementString};
   }
   

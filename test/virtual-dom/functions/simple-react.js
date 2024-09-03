@@ -62,3 +62,5 @@ const SimpleReact = {
   render,
   Component,
 };
+
+module.exports = { SimpleReact };

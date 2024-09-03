@@ -1,14 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 
-fs.readFile(path.resolve(__dirname, `./test.js`), "utf8", (err, data) => {
+fs.readFile(path.resolve(__dirname, `./test.jsb`), "utf8", (err, data) => {
   if (err) {
     console.error(err);
   }
 
   const replace = data.replace(/\s/g, "");
   const tree = tokenizeJSXtoTree(replace);
-  const isExistFolder = fs.existsSync(path.resolve(__dirname, `./build`));
+  const isExistFolder = fs.existsSync(path.resolve(__dirname, `../build`));
 
   if (isExistFolder) {
     fs.rmSync(
@@ -22,21 +22,25 @@ fs.readFile(path.resolve(__dirname, `./test.js`), "utf8", (err, data) => {
     );
   }
 
-  fs.mkdirSync(path.resolve(__dirname, `./build`), { recursive: true });
+  fs.mkdirSync(path.resolve(__dirname, `../build`), { recursive: true });
 
   const simpleReact = fs.readFileSync(
     path.resolve(__dirname, `../packages/simple-react.js`),
     "utf8"
   );
 
-  fs.writeFile(`${__dirname}/build/simple-react.js`, simpleReact, (err) => {
-    if (err) {
-      console.error(err);
+  fs.writeFile(
+    path.resolve(__dirname, `../build/simple-react.js`),
+    simpleReact,
+    (err) => {
+      if (err) {
+        console.error(err);
+      }
     }
-  });
+  );
 
   fs.writeFile(
-    path.resolve(__dirname, `./build/output.js`),
+    path.resolve(__dirname, `../build/output.js`),
     generateAppFunction(tree),
     (err) => {
       if (err) {
@@ -46,7 +50,7 @@ fs.readFile(path.resolve(__dirname, `./test.js`), "utf8", (err, data) => {
   );
 
   fs.writeFile(
-    path.resolve(__dirname, `./build/output.html`),
+    path.resolve(__dirname, `../build/output.html`),
     `<!DOCTYPE html>
     <html lang="en">
       <head>

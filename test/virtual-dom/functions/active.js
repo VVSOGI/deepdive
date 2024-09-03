@@ -25,7 +25,7 @@ fs.readFile(path.resolve(__dirname, `./test.js`), "utf8", (err, data) => {
   fs.mkdirSync(path.resolve(__dirname, `./build`), { recursive: true });
 
   const simpleReact = fs.readFileSync(
-    path.resolve(__dirname, `../simple-react.js`),
+    path.resolve(__dirname, `../packages/simple-react.js`),
     "utf8"
   );
 

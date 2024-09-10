@@ -1,0 +1,11 @@
+{
+  "name": "chunk",
+  "version": "1.0.0",
+  "description": "chunk play with base 52",
+  "main": "encodeBase52.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

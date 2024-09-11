@@ -1,32 +1,45 @@
 const path = require("path");
 const fs = require("fs");
-const { encodeFolder, decodeFolder } = require("../config");
+const chalk = require("chalk");
+const { decodeFolder } = require("../config");
 
-let result = "";
-const data = fs.readdirSync(path.resolve(__dirname, `../${encodeFolder}`), "utf8", (err) => {
-  if (err) {
-    console.error(err);
-  }
-});
-
-data.forEach((file) => {
-  const data = fs.readFileSync(path.resolve(__dirname, `../${encodeFolder}`) + `/${file}`, "utf8", (err) => {
+function decode(options) {
+  const decodeTargetFolder = path.resolve(options.decode);
+  console.log(chalk.cyan(`Start decoding files in ${decodeTargetFolder}`));
+  const regTxt = /^.+\.txt$/i;
+  let result = "";
+  const data = fs.readdirSync(decodeTargetFolder, "utf8", (err) => {
     if (err) {
-      console.error("Error occured when read file: ", err);
-      return;
+      console.error(err);
     }
   });
 
-  result += Buffer.from(data, "base64").toString("utf8");
-});
+  data.forEach((file) => {
+    if (!regTxt.test(file)) {
+      return;
+    }
 
-if (!fs.existsSync(path.resolve(__dirname, `../${decodeFolder}`))) {
-  fs.mkdirSync(path.resolve(__dirname, `../${decodeFolder}`));
+    const data = fs.readFileSync(decodeTargetFolder + `/${file}`, "utf8", (err) => {
+      if (err) {
+        console.error("Error occured when read file: ", err);
+        return;
+      }
+    });
+
+    result += Buffer.from(data, "base64").toString("utf8");
+  });
+
+  if (!fs.existsSync(path.resolve(decodeTargetFolder, `./${decodeFolder}`))) {
+    fs.mkdirSync(path.resolve(decodeTargetFolder, `./${decodeFolder}`));
+  }
+
+  fs.writeFile(path.resolve(decodeTargetFolder, `${decodeTargetFolder}/${decodeFolder}/decoded.txt`), result, (err) => {
+    if (err) {
+      console.error("Error occured when save file: ", err);
+      return;
+    }
+  });
+  console.log(chalk.cyan(`Complete decoding files in ${`${decodeTargetFolder}/${decodeFolder}/decoded.txt`}`));
 }
 
-fs.writeFile(path.resolve(__dirname, `../${decodeFolder}/decoded.txt`), result, (err) => {
-  if (err) {
-    console.error("Error occured when save file: ", err);
-    return;
-  }
-});
+module.exports = decode;

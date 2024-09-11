@@ -1,26 +1,13 @@
 const path = require("path");
 const fs = require("fs");
-const commander = require("commander");
-const packageJson = require("../package.json");
 const chalk = require("chalk");
-
 const { encodeFolder, chunkSize } = require("../config.js");
-let targetFilePath = null;
-let outputFolder = null;
 
-function init() {
-  const program = new commander.Command(packageJson.name)
-    .version(packageJson.version)
-    .usage(`${chalk.green("<target-file-path> <output-folder>")} [options]`)
-    .option("-t, --target <path>", "Target file path")
-    .option("-o, --output <folder>", "Output folder")
-    .parse(process.argv);
-
-  const args = program.args;
-  const options = program.opts();
-
-  targetFilePath = options.target || args[0];
-  outputFolder = options.output + `/${encodeFolder}` || args[1] + `/${encodeFolder}`;
+function encode(options) {
+  const targetFilePath = options.target;
+  const outputFolder = options.output + `/${encodeFolder}`;
+  const absoluteOutputFolder = path.resolve(outputFolder);
+  const absoluteFilePath = path.resolve(targetFilePath);
 
   if (!targetFilePath) {
     console.log(chalk.red("No target file path specified"));
@@ -34,7 +21,6 @@ function init() {
     process.exit(1);
   }
 
-  const absoluteOutputFolder = path.resolve(outputFolder);
   console.log(chalk.cyan(`Check exists ${absoluteOutputFolder}`));
   if (!fs.existsSync(absoluteOutputFolder)) {
     try {
@@ -50,7 +36,6 @@ function init() {
   }
   console.log(chalk.green(`Complete to create a folder ${absoluteOutputFolder}`));
 
-  const absoluteFilePath = path.resolve(targetFilePath);
   console.log(chalk.cyan(`Check exists ${absoluteFilePath}`));
   if (fs.existsSync(absoluteFilePath)) {
     console.log(chalk.green(`File ${targetFilePath} found at ${absoluteFilePath}`));
@@ -90,4 +75,4 @@ function init() {
   }
 }
 
-init();
+module.exports = encode;

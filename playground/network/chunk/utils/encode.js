@@ -56,31 +56,31 @@ function init() {
     console.log(chalk.green(`File ${targetFilePath} found at ${absoluteFilePath}`));
     console.log(chalk.cyan(`[ Start ] ${absoluteFilePath} encoding...`));
 
-    // const data = fs.readFileSync(absoluteFilePath, "utf8", (err, data) => {
-    //   if (err) {
-    //     console.error("Error occured when read file: ", err);
-    //     return;
-    //   }
-    // });
+    const data = fs.readFileSync(absoluteFilePath, "utf8", (err, data) => {
+      if (err) {
+        console.error("Error occured when read file: ", err);
+        return;
+      }
+    });
 
-    // const chunks = [];
-    // for (let i = 0; i < data.length; i += chunkSize) {
-    //   const encodedChunk = Buffer.from(data.slice(i, i + chunkSize)).toString("base64");
-    //   chunks.push(encodedChunk);
-    // }
+    const chunks = [];
+    for (let i = 0; i < data.length; i += chunkSize) {
+      const encodedChunk = Buffer.from(data.slice(i, i + chunkSize)).toString("base64");
+      chunks.push(encodedChunk);
+    }
 
-    // chunks.forEach((chunk, index) => {
-    //   fs.writeFile(
-    //     path.resolve(__dirname, path.resolve(__dirname, `../${encodeFolder}`)) + `/chunk-${index + 1}.txt`,
-    //     chunk,
-    //     (err) => {
-    //       if (err) {
-    //         console.error("Error occured when save file: ", err);
-    //         return;
-    //       }
-    //     }
-    //   );
-    // });
+    chunks.forEach((chunk, index) => {
+      fs.writeFile(
+        path.resolve(__dirname, path.resolve(absoluteOutputFolder)) + `/chunk-${index + 1}.txt`,
+        chunk,
+        (err) => {
+          if (err) {
+            console.error("Error occured when save file: ", err);
+            return;
+          }
+        }
+      );
+    });
 
     console.log(chalk.cyan(`[ Success ] File ${absoluteFilePath} encoded successfully!`));
   } else {

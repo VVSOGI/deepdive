@@ -1,9 +1,11 @@
 const readmePath = "README.md";
 const chunkSize = 500;
-const outputDir = "chunks";
+const encodeFolder = "encoded";
+const decodeFolder = "decoded";
 
 module.exports = {
   readmePath,
   chunkSize,
-  outputDir,
+  encodeFolder,
+  decodeFolder,
 };

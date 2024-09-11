@@ -1,10 +1,10 @@
 const path = require("path");
 const fs = require("fs");
 
-const { outputDir, readmePath, chunkSize } = require("./config.js");
+const { encodeFolder, readmePath, chunkSize } = require("../config.js");
 
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir);
+if (!fs.existsSync(path.resolve(__dirname, `../${encodeFolder}`))) {
+  fs.mkdirSync(path.resolve(__dirname, `../${encodeFolder}`));
 }
 
 function init() {
@@ -22,12 +22,16 @@ function init() {
   }
 
   chunks.forEach((chunk, index) => {
-    fs.writeFile(path.resolve(__dirname, outputDir) + `/chunk-${index + 1}.txt`, chunk, (err) => {
-      if (err) {
-        console.error("Error occured when save file: ", err);
-        return;
+    fs.writeFile(
+      path.resolve(__dirname, path.resolve(__dirname, `../${encodeFolder}`)) + `/chunk-${index + 1}.txt`,
+      chunk,
+      (err) => {
+        if (err) {
+          console.error("Error occured when save file: ", err);
+          return;
+        }
       }
-    });
+    );
   });
 }
 

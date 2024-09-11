@@ -11,3 +11,5 @@ async function readFile(path) {
     });
   });
 }
+
+module.exports = readFile;

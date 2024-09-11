@@ -1,19 +1,18 @@
-const fs = require("fs");
 const path = require("path");
-const makeChunk = require("./utils/makeChunk.js");
+const fs = require("fs");
+const save = require("./utils/save.js");
+const readFile = require("./utils/readfile.js");
 
-const readmePath = "README.md";
-const chunkSize = 500;
-const outputDir = "chunks";
+const { outputDir, readmePath, chunkSize } = require("./config.js");
 
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir);
 }
 
-fs.readFile(readmePath, "utf8", (err, data) => {
-  if (err) {
-    console.error("Error occured when read file: ", err);
-    return;
-  }
-  const chunks = makeChunk(data, chunkSize);
-});
+async function init() {
+  const data = await readFile(readmePath);
+  const chunksFolder = path.resolve(__dirname, outputDir);
+  save(data, chunkSize, chunksFolder);
+}
+
+init();

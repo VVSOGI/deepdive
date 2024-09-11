@@ -9,9 +9,8 @@ to_absolute_path() {
     echo "$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
 }
 
-TARGET_PATH=$(to_absolute_path "$1")
-OUTPUT_PATH=$(to_absolute_path "$2")
+TARGET_DECODE_PATH=$(to_absolute_path "$1")
 
 cd "$(dirname "$0")"
 
-node ../index.js -t "$TARGET_PATH" -o "$OUTPUT_PATH"
+node ../index.js -d "$TARGET_DECODE_PATH"

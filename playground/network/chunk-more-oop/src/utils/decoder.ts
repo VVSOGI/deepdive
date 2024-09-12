@@ -1,4 +1,4 @@
-import path, { resolve } from "path";
+import path from "path";
 import fs from "fs";
 import chalk from "chalk";
 import { decodeFolder, DecodeOptions } from "../config";
@@ -7,7 +7,7 @@ export class Decoder {
   private decodeTargetFolder: string;
 
   constructor(options: DecodeOptions) {
-    this.decodeTargetFolder = resolve(options.decode);
+    this.decodeTargetFolder = path.resolve(options.decode);
   }
 
   private ensureDecodeFolderExists(): void {

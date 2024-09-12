@@ -7,7 +7,12 @@ const encode = require("./utils/encode.js");
 function init() {
   const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
-    .usage(`${chalk.green("<target-file-path> <output-folder> <target-folder>")} [options]`)
+    .usage(
+      `
+      node index.js -t ${chalk.green("<target-file-path>")} -o ${chalk.green("<output-folder>")}
+      node index.js -d ${chalk.green("<target-folder>")}
+      `
+    )
     .option("-t, --target <path>", "Target file path")
     .option("-o, --output <folder>", "Output folder")
     .option("-d --decode <target-folder>", "Decode target folder")

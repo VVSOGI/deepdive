@@ -1,6 +1,8 @@
 import commander from "commander";
 import packageJson from "../package.json";
 import chalk from "chalk";
+import { CliOptions } from "./config";
+import { decode, encode } from "./utils";
 
 function init() {
   const program = new commander.Command(packageJson.name)
@@ -16,13 +18,13 @@ function init() {
     .option("-d --decode <target-folder>", "Decode target folder")
     .parse(process.argv);
 
-  const options = program.opts<{ target: string; output: string; decode: string }>();
+  const options = program.opts<CliOptions>();
 
-  //   if (options.decode) {
-  //     return decode(options);
-  //   }
+  if (options.decode) {
+    return decode(options);
+  }
 
-  //   return encode(options);
+  return encode(options);
 }
 
 init();

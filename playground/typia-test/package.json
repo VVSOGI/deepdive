@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "ts-patch install && typia patch",
-    "build": "npx typia generate --input src --output ./output --project tsconfig.json && node build.mjs && rimraf ./output"
+    "build": "npx typia generate --input src --output ./output --project tsconfig.json && node esbuild.mjs && rimraf ./output"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,7 @@
     "typia": "^6.10.1"
   },
   "devDependencies": {
+    "@ryoppippi/unplugin-typia": "^1.0.6",
     "esbuild": "^0.23.1",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.2.1",

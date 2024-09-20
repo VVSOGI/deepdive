@@ -2,12 +2,13 @@ import { build } from "esbuild";
 import UnpluginTypia from "@ryoppippi/unplugin-typia/esbuild";
 
 build({
-  entryPoints: "./output/**",
+  entryPoints: ["./output/**/*"],
   bundle: true,
-  outfile: "./build/output.js",
+  outdir: "./build",
   plugins: [
     UnpluginTypia({
       /* options */
+      cache: true,
     }),
   ],
 });

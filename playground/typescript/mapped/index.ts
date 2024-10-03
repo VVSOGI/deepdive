@@ -42,12 +42,32 @@ class person implements LazyPerson {
     return "se";
   }
 }
-function filter<T>(arr: readonly T[], doesMatch: { [K in keyof T]?: T[K] }): T[] {
-  return [...arr];
-}
 
-const arr = [
-  { id: 1, name: "Alice" },
-  { id: 2, name: "Bob" },
-];
-filter(arr, { name: "Bob" });
+type Man = {
+  id: number;
+  name: string;
+  age: number;
+  message?: string;
+};
+
+type Concrete<T> = {
+  [property in keyof T]-?: T[property];
+};
+
+type User = Concrete<Man>;
+
+const man: User = {
+  id: 1,
+  name: "doe",
+  age: 25,
+  message: "hello world!",
+};
+
+type EventConfig<Events extends { kind: string }> = {
+  [E in Events as E["kind"]]: (event: E) => void;
+};
+
+type SquareEvent = { kind: "square"; x: number; y: number };
+type CircleEvent = { kind: "circle"; radius: number };
+
+type Config = EventConfig<SquareEvent | CircleEvent>;

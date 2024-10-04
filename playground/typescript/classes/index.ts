@@ -52,4 +52,26 @@
       return Number(target);
     }
   }
+
+  interface Pingable {
+    x: number;
+    y: number;
+    z: number;
+    ping(): void;
+  }
+
+  type TwoDimension = "x" | "y";
+
+  type Coordinated<T> = {
+    [P in keyof T as P extends TwoDimension ? P : never]: T[P];
+  };
+
+  class Sonar implements Coordinated<Pingable> {
+    x: number;
+    y: number;
+    constructor(coordinated: Coordinated<Pingable>) {
+      this.x = coordinated.x;
+      this.y = coordinated.y;
+    }
+  }
 }

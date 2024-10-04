@@ -5,7 +5,7 @@
   }
 
   type RequiredMimic<T> = {
-    [Property in keyof T as Property extends string ? `mimic${Capitalize<Property>}` : never]-?: T[Property];
+    [Property in keyof T as `mimic${Capitalize<string & Property>}`]-?: T[Property];
   };
 
   const obj: Props = { a: 5 };

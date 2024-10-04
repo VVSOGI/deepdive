@@ -36,11 +36,11 @@
       this.y = y;
     }
 
-    getX() {
+    get getX() {
       return this.x;
     }
 
-    getY() {
+    get getY() {
       return this.y;
     }
 
@@ -72,6 +72,70 @@
     constructor(coordinated: Coordinated<Pingable>) {
       this.x = coordinated.x;
       this.y = coordinated.y;
+    }
+  }
+
+  class Animal {
+    test: number;
+    constructor(test: number) {
+      this.test = test;
+    }
+    move() {
+      console.log("Moving along!");
+    }
+  }
+
+  class Dog extends Animal {
+    constructor() {
+      super(10);
+      console.log(this.test);
+    }
+
+    move(something?: string) {
+      if (!something) {
+        super.move();
+      } else {
+        console.log(`he saied ${something}`);
+      }
+    }
+
+    woof(times: number) {
+      for (let i = 0; i < times; i++) {
+        console.log("woof!");
+      }
+    }
+  }
+
+  /**
+   * Error, Array, Map 같은 객체를 extends 할 때 가끔씩
+   * 자바스크립트가 prototype을 상위 객체에 할당하는 일이 있다.
+   * 이러한 객체들을 extends 한다면 property를 재설정하는 것이 일반적이다.
+   */
+  class MsgError extends Error {
+    constructor(m: string) {
+      super(m);
+      Object.setPrototypeOf(this, MsgError.prototype);
+    }
+
+    sayHello() {
+      return "hello " + this.message;
+    }
+  }
+
+  class Greeter {
+    public greet() {
+      console.log("Hello, " + this.getName());
+    }
+    protected getName() {
+      return "hi";
+    }
+  }
+
+  class SpecialGreeter extends Greeter {
+    public howdy(some: string) {
+      // OK to access protected member here
+      console.log("Howdy, " + this.getName() + some);
+      console.log(this.getName());
     }
   }
 }

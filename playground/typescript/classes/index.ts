@@ -129,6 +129,10 @@
     protected getName() {
       return "hi";
     }
+
+    private privateFunc() {
+      return "private";
+    }
   }
 
   class SpecialGreeter extends Greeter {
@@ -138,4 +142,6 @@
       console.log(this.getName());
     }
   }
+
+  new SpecialGreeter().howdy("some");
 }

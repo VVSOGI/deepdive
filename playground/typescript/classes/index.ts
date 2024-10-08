@@ -73,6 +73,18 @@
       this.x = coordinated.x;
       this.y = coordinated.y;
     }
+
+    ping() {
+      return "Ping";
+    }
+
+    pong() {
+      return "Pong";
+    }
+
+    pung() {
+      return "펑~";
+    }
   }
 
   class Animal {
@@ -137,6 +149,7 @@
 
   class SpecialGreeter extends Greeter {
     public some = "test";
+    static thing = "thing";
 
     public howdy(some: string) {
       // OK to access protected member here
@@ -149,4 +162,6 @@
   greeter.some = "say";
 
   const greeter2 = new SpecialGreeter();
+
+  SpecialGreeter.thing = "Thug";
 }

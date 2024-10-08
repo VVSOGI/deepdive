@@ -54,4 +54,4 @@ type Test<T extends any[]> = T[number];
 
 type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 
-type Str = Flatten<string[]>;
+type Str = Flatten<{ id: number; name: string }[]>;

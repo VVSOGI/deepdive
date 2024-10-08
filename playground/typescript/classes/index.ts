@@ -136,6 +136,8 @@
   }
 
   class SpecialGreeter extends Greeter {
+    public some = "test";
+
     public howdy(some: string) {
       // OK to access protected member here
       console.log("Howdy, " + this.getName() + some);
@@ -143,5 +145,8 @@
     }
   }
 
-  new SpecialGreeter().howdy("some");
+  const greeter = new SpecialGreeter();
+  greeter.some = "say";
+
+  const greeter2 = new SpecialGreeter();
 }

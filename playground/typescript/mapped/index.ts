@@ -1,6 +1,6 @@
 {
-  type CreateMutable<Type> = {
-    -readonly [Property in keyof Type]: Type[Property];
+  type CreateMutable<T> = {
+    -readonly [P in keyof T]: T[P];
   };
 
   type LockedAccount = {
@@ -10,8 +10,8 @@
 
   type UnlockedAccount = CreateMutable<LockedAccount>;
 
-  type Getters<Type> = {
-    [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => Type[Property];
+  type Getters<T> = {
+    [P in keyof T as `get${Capitalize<string & P>}`]: () => T[P];
   };
 
   // 너무 놀랍다..

@@ -16,4 +16,9 @@
     joe: people[0],
     alice: people[1],
   };
+
+  const sym = Symbol();
+  const list2: Record<symbol, { id: number; name: string }[]> = {
+    [sym]: [{ id: 1, name: "123" }],
+  };
 }

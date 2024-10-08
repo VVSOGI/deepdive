@@ -11,7 +11,7 @@
   type UnlockedAccount = CreateMutable<LockedAccount>;
 
   type Getters<T> = {
-    [P in keyof T as `get${Capitalize<string & P>}`]: () => T[P];
+    [P in keyof T as P extends string | Symbol ? `get${Capitalize<string & P>}` : never]: () => T[P];
   };
 
   // 너무 놀랍다..
